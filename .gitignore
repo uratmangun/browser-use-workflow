@@ -106,3 +106,7 @@ temp/
 # package-lock.json
 # yarn.lock
 # bun.lockb
+
+# xmcp
+.xmcp
+xmcp-env.d.ts
