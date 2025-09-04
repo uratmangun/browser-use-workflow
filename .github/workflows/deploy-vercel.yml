@@ -27,7 +27,7 @@ jobs:
       - name: "🧰 Setup Node.js"
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "22"
           cache: "pnpm"
 
       - name: "📦 Install dependencies"
@@ -236,24 +236,6 @@ jobs:
         run: |
           echo "🔧 Generating Farcaster account association for domain: $NEXT_PUBLIC_APP_DOMAIN"
           node scripts/generate-farcaster-account-association.js generate
-      - name: "🔧 Install Sharp for Node.js 20"
-        run: |
-          echo "🔧 Installing Sharp with platform-specific binaries"
-          echo "Platform: $(uname -m) $(uname -s)"
-          echo "Node version: $(node --version)"
-          echo "PNPM version: $(pnpm --version)"
-
-          # Install Sharp with npm for better binary compatibility
-          npm install sharp@0.33.5 --include=optional
-
-          # Verify Sharp installation
-          echo "✅ Verifying Sharp installation..."
-          node -e "
-            const sharp = require('sharp');
-            console.log('Sharp version:', sharp.versions);
-            console.log('Platform:', process.platform, process.arch);
-            console.log('✅ Sharp loaded successfully');
-          "
 
       - name: "🎨 Generate AI icon"
         env:
