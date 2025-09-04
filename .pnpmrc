@@ -1,0 +1,8 @@
+# Disable optional dependencies to prevent build failures on Vercel
+# This prevents packages like 'lzo' from being installed, which require
+# native compilation and can fail due to missing system dependencies
+optional=false
+
+# Alternative: you can also disable specific optional dependencies
+# by using the following syntax (commented out):
+# optional-deps.lzo=false
