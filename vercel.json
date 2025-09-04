@@ -2,14 +2,6 @@
   "buildCommand": "pnpm build",
   "installCommand": "pnpm install --no-optional",
   "framework": "nextjs",
-  "functions": {
-    "pages/**/*.js": {
-      "runtime": "nodejs18.x"
-    },
-    "pages/api/**/*.js": {
-      "runtime": "nodejs18.x"
-    }
-  },
   "env": {
     "SKIP_OPTIONAL_DEPS": "true",
     "NPM_CONFIG_OPTIONAL": "false",

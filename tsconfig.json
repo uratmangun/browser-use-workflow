@@ -23,9 +23,8 @@
       }
     ],
     "paths": {
-      "@/*": [
-        "./src/*"
-      ],
+      "@/*": ["./src/*"],
+      "@xmcp/adapter": ["./.xmcp/adapter"],
       "@/components/*": [
         "./src/components/*"
       ],

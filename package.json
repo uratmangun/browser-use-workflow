@@ -6,8 +6,8 @@
   "author": "",
   "license": "MIT",
   "scripts": {
-    "dev": "xmcp dev & next dev",
-    "build": "xmcp build && next build",
+    "dev": "node scripts/build-xmcp-adapter.js && next dev",
+    "build": "node scripts/build-xmcp-adapter.js && next build",
     "start": "next start",
     "lint": "next lint",
     "type-check": "tsc --noEmit",
@@ -41,7 +41,7 @@
     "server-only": "^0.0.1",
     "sharp": "^0.34.3",
     "together-ai": "^0.22.0",
-    "xmcp": "^0.1.13",
+    "xmcp": "^0.1.10",
     "zod": "^4.1.5"
   },
   "devDependencies": {
