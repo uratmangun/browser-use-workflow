@@ -236,6 +236,24 @@ jobs:
         run: |
             echo "🔧 Generating Farcaster account association for domain: $NEXT_PUBLIC_APP_DOMAIN"
             node scripts/generate-farcaster-account-association.js generate
+      - name: "🔧 Install Sharp for linux-x64"
+        run: |
+          echo "🔧 Installing Sharp with platform-specific binaries for linux-x64"
+          pnpm add --save-exact sharp@^0.34.3 --platform=linux --arch=x64
+          
+          # Verify Sharp installation
+          echo "✅ Verifying Sharp installation..."
+          node -e "
+            try {
+              const sharp = require('sharp');
+              console.log('Sharp version:', sharp.versions);
+              console.log('✅ Sharp loaded successfully for linux-x64');
+            } catch (error) {
+              console.error('❌ Sharp failed to load:', error.message);
+              process.exit(1);
+            }
+          "
+
       - name: "🎨 Generate AI icon"
         env:
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
@@ -254,6 +272,19 @@ jobs:
         env:
           BROWSERLESS_API_URL: ${{ secrets.BROWSERLESS_API_URL }}
         run: |
+          # Ensure Sharp is available for any screenshot processing
+          echo "🔧 Verifying Sharp installation for screenshot generation..."
+          node -e "
+            try {
+              const sharp = require('sharp');
+              console.log('✅ Sharp available for screenshots');
+            } catch (error) {
+              console.log('Installing Sharp for screenshots...');
+              const { execSync } = require('child_process');
+              execSync('pnpm add --save-exact sharp@^0.34.3 --platform=linux --arch=x64', { stdio: 'inherit' });
+            }
+          "
+          
           # Use the actual production domain from the temporary deployment step
           PRODUCTION_DOMAIN="${{ steps.deploy-temp.outputs.production_domain }}"
           PRODUCTION_URL="https://${PRODUCTION_DOMAIN}"
