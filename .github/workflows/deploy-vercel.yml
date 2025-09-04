@@ -239,25 +239,36 @@ jobs:
       - name: "🔧 Install Sharp for linux-x64"
         run: |
           echo "🔧 Installing Sharp with platform-specific binaries for linux-x64"
+          echo "Platform: $(uname -m) $(uname -s)"
+          echo "Node version: $(node --version)"
+          echo "NPM version: $(npm --version)"
           
-          # Remove existing Sharp if present and reinstall with correct binaries
-          pnpm remove sharp || true
+          # Clean up any existing Sharp installations
+          rm -rf node_modules/sharp
+          rm -rf ~/.npm/_libvips
+          rm -rf ~/.npm/_cacache
           
-          # Install Sharp with optional dependencies enabled for platform binaries
-          pnpm install --include=optional sharp@^0.34.3
+          # Force npm to fetch fresh binaries for the linux-x64 platform
+          npm config set sharp_binary_host "https://github.com/lovell/sharp-libvips/releases/download"
+          npm config set sharp_libvips_binary_host "https://github.com/lovell/sharp-libvips/releases/download"
+          
+          # Install Sharp using npm with forced platform detection
+          SHARP_IGNORE_GLOBAL_LIBVIPS=1 npm install --force --verbose sharp@0.33.5
           
           # Verify Sharp installation
           echo "✅ Verifying Sharp installation..."
           node -e "
-            try {
-              const sharp = require('sharp');
-              console.log('Sharp version:', sharp.versions);
-              console.log('✅ Sharp loaded successfully for linux-x64');
-            } catch (error) {
-              console.error('❌ Sharp failed to load:', error.message);
-              process.exit(1);
-            }
-          "
+            const sharp = require('sharp');
+            console.log('Sharp version:', sharp.versions);
+            console.log('Platform:', process.platform, process.arch);
+            console.log('✅ Sharp loaded successfully for linux-x64');
+          " || {
+            echo "❌ Sharp failed to load, attempting alternative installation..."
+            # Alternative: Download prebuilt binaries directly
+            mkdir -p node_modules/sharp/vendor/8.15.1/linux-x64
+            curl -L https://github.com/lovell/sharp-libvips/releases/download/v8.15.1/libvips-8.15.1-linux-x64.tar.br | tar -xj -C node_modules/sharp/vendor/8.15.1/linux-x64
+            node -e "require('sharp')" || exit 1
+          }
 
       - name: "🎨 Generate AI icon"
         env:
@@ -284,9 +295,8 @@ jobs:
               const sharp = require('sharp');
               console.log('✅ Sharp available for screenshots');
             } catch (error) {
-              console.log('Installing Sharp for screenshots...');
-              const { execSync } = require('child_process');
-              execSync('pnpm install --include=optional sharp@^0.34.3', { stdio: 'inherit' });
+              console.log('❌ Sharp not available, but should have been installed earlier');
+              console.error(error.message);
             }
           "
           
