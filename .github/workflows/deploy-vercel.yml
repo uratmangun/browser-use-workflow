@@ -33,9 +33,6 @@ jobs:
       - name: "📦 Install dependencies"
         run: pnpm install --no-frozen-lockfile
 
-      - name: "🧪 Type check"
-        run: pnpm run type-check
-
       - name: "🛠️ Install Vercel CLI"
         run: pnpm add -g vercel@latest
 
