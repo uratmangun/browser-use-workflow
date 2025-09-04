@@ -239,7 +239,12 @@ jobs:
       - name: "🔧 Install Sharp for linux-x64"
         run: |
           echo "🔧 Installing Sharp with platform-specific binaries for linux-x64"
-          pnpm add --save-exact sharp@^0.34.3 --platform=linux --arch=x64
+          
+          # Remove existing Sharp if present and reinstall with correct binaries
+          pnpm remove sharp || true
+          
+          # Install Sharp with optional dependencies enabled for platform binaries
+          pnpm install --include=optional sharp@^0.34.3
           
           # Verify Sharp installation
           echo "✅ Verifying Sharp installation..."
@@ -281,7 +286,7 @@ jobs:
             } catch (error) {
               console.log('Installing Sharp for screenshots...');
               const { execSync } = require('child_process');
-              execSync('pnpm add --save-exact sharp@^0.34.3 --platform=linux --arch=x64', { stdio: 'inherit' });
+              execSync('pnpm install --include=optional sharp@^0.34.3', { stdio: 'inherit' });
             }
           "
           
