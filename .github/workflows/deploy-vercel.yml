@@ -27,7 +27,7 @@ jobs:
       - name: "🧰 Setup Node.js"
         uses: actions/setup-node@v4
         with:
-          node-version: "22"
+          node-version: "20"
           cache: "pnpm"
 
       - name: "📦 Install dependencies"
@@ -236,22 +236,15 @@ jobs:
         run: |
           echo "🔧 Generating Farcaster account association for domain: $NEXT_PUBLIC_APP_DOMAIN"
           node scripts/generate-farcaster-account-association.js generate
-      - name: "🔧 Install Sharp for linux-x64"
+      - name: "🔧 Install Sharp for Node.js 20"
         run: |
-          echo "🔧 Installing Sharp with platform-specific binaries for linux-x64"
+          echo "🔧 Installing Sharp with platform-specific binaries"
           echo "Platform: $(uname -m) $(uname -s)"
           echo "Node version: $(node --version)"
           echo "PNPM version: $(pnpm --version)"
 
-          # Clean up any existing Sharp installations
-          rm -rf node_modules/sharp
-
-          # Use pnpm approach for Sharp
-          # First install Sharp normally
-          pnpm add sharp@0.33.5
-
-          # Then rebuild to ensure correct binaries
-          pnpm rebuild sharp
+          # Install Sharp with npm for better binary compatibility
+          npm install sharp@0.33.5 --include=optional
 
           # Verify Sharp installation
           echo "✅ Verifying Sharp installation..."
@@ -259,13 +252,8 @@ jobs:
             const sharp = require('sharp');
             console.log('Sharp version:', sharp.versions);
             console.log('Platform:', process.platform, process.arch);
-            console.log('✅ Sharp loaded successfully for linux-x64');
-          " || {
-            echo "❌ Sharp failed to load, trying force reinstall..."
-            rm -rf node_modules/sharp
-            SHARP_IGNORE_GLOBAL_LIBVIPS=1 pnpm add sharp@0.33.5 --force
-            node -e "require('sharp')" || exit 1
-          }
+            console.log('✅ Sharp loaded successfully');
+          "
 
       - name: "🎨 Generate AI icon"
         env:
